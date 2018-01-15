@@ -1,0 +1,77 @@
+body {
+	background-color: #031D2D;
+	color: #F0F0F1;
+	font-family: Verdana;
+	font-weight:normal;
+	font-size:14px;
+}
+
+h2 {
+	color: #05EBEB;
+	margin: auto;
+	width: auto;
+	text-align: center;
+	padding: 10px;
+	background-color: #3D7B9C;
+	border-radius: 10px;
+}
+
+p {
+	margin-top: 30px;
+}
+
+input {
+	outline:none;
+}
+
+.center {
+	margin: auto;
+	width: 600px;
+	height: 300px;
+	padding: 20px;
+	border-radius: 20px;
+	border-width: 2px;
+	border-style: solid;
+	border-color: #00ABD6;
+}
+
+#rezultEncryptOrDesipher {
+	color: #FF5349;
+	font-family: Verdana;
+	font-weight:bold;
+	font-size:18px;
+}
+
+.result {
+	padding: 15px;
+	background-color: #292C44;
+	font-weight: bold;
+	border-radius: 10px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #00ABD6;
+}
+
+#userString, #userKey {
+	background-color: #292C44;
+	font-weight: bold;
+	border-radius: 5px;
+	color: #B0AEAA;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #00ABD6;
+	height: 25px;
+	padding: 5px;
+}
+
+.btn {
+	background-color: #292C44;
+	font-weight: bold;
+	border-radius: 5px;
+	color: #FF5349;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #00ABD6;
+	height: 30px;
+	padding: 5px;
+}
