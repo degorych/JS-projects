@@ -7,24 +7,24 @@
 </head>
 <body>
 	<div class="center">
-	<h2>Vigener encrypt</h2>
-	<p>
-		Enter key:
-		<input type="text" id="userKey" value="abc" size="2" onkeypress="validate(event)" />
-	</p>
-	<p>
-		Enter string:
-		<input type="text" id="userString" value="test" size="20" />
-	</p>
-	<div style="float: left; margin-right: 5px;">
-		<input type="button" class="btn" onclick="encrypt()" value="Encrypt"></input>
-	</div>
-	<div style="margin-left: 5px;">
-		<input type="button" class="btn" onclick="decipher()" value="Decipher"></input>
-	</div>
-	<p class="result">
-		Result:&nbsp;<output id="rezultEncryptOrDesipher">no result yet</output>
-	</p>
+		<h2>Vigener encrypt</h2>
+		<p>
+			Enter key:
+			<input type="text" id="userKey" value="abc" size="2" onkeypress="validate(event)" />
+		</p>
+		<p>
+			Enter string:
+			<input type="text" id="userString" value="test" size="20" />
+		</p>
+		<div style="float: left; margin-right: 5px;">
+			<input type="button" class="btn" onclick="encrypt()" value="Encrypt"></input>
+		</div>
+		<div style="margin-left: 5px;">
+			<input type="button" class="btn" onclick="decipher()" value="Decipher"></input>
+		</div>
+		<p class="result">
+			Result:&nbsp;<output id="rezultEncryptOrDesipher">no result yet</output>
+		</p>
 	</div>
 	<script type="text/javascript">
 
@@ -33,120 +33,133 @@
 
 		/* --- Transform userKey symbol in char to integer --- */
 		function transformUserKey(userKey) {
-      var transformedUserKey;
+			var transformedUserKey;
 
-      if (alphabetBig.indexOf(userKey) != -1) {
-        transformedUserKey = alphabetBig.indexOf(userKey);
-      }
-      else if (alphabetSmall.indexOf(userKey) != -1) {
-        transformedUserKey = alphabetSmall.indexOf(userKey);
-      }
-      return parseInt(transformedUserKey);
-    }
+			if (alphabetBig.indexOf(userKey) != -1) {
+				transformedUserKey = alphabetBig.indexOf(userKey);
+			}
+			else if (alphabetSmall.indexOf(userKey) != -1) {
+				transformedUserKey = alphabetSmall.indexOf(userKey);
+			}
+			
+			return parseInt(transformedUserKey);
+		}
 
-        /* --- Validate for user string --- */
-    function validate(evt) {
-      var theEvent = evt || window.event; // Кроссбраузерное решение, создается объект события evt
-      var key = theEvent.keyCode || theEvent.which; // keyCode - свойство, содержащее скан-код нажатой клавиши (число), which - код символа, отличный от буквы
-      key = String.fromCharCode(key); // String.fromCharCode(n1,n2,..nn) - возвращает элементарную строку из последовательности Unicod
-      var regex = /[A-Z, a-z]/;
-      if(!regex.test(key)) { // Выясняем, есть ли совпадения с регуляркой
-        theEvent.returnValue = false; // Для кроссбраузерности, IE косячит
-        if(theEvent.preventDefault) {
-          theEvent.preventDefault(); // preventDefault() - Отмена действия браузера (не записываем символ, если нет совпадения)
-        }
-      }
-    }
+		/* --- Validate for user string --- */
+		function validate(evt) {
+			var theEvent = evt || window.event; // Кроссбраузерное решение, создается объект события evt
+			var key = theEvent.keyCode || theEvent.which; // keyCode - свойство, содержащее скан-код нажатой клавиши (число), which - код символа, отличный от буквы
+			key = String.fromCharCode(key); // String.fromCharCode(n1,n2,..nn) - возвращает элементарную строку из последовательности Unicod
+			var regex = /[A-Z, a-z]/;
+			
+			if(!regex.test(key)) { // Выясняем, есть ли совпадения с регуляркой
+				theEvent.returnValue = false; // Для кроссбраузерности, IE косячит
+				
+				if(theEvent.preventDefault) {
+					theEvent.preventDefault(); // preventDefault() - Отмена действия браузера (не записываем символ, если нет совпадения)
+				}
+			}
+		}
 
     		/* --- Increase user key to user string lens --- */
-    function increaseUserKey(userKey, userStringLens) {
-      while (userKey.length < userStringLens) {
-        userKey = userKey.concat(userKey);
-      }
-      return userKey;
-    }
+		function increaseUserKey(userKey, userStringLens) {
+			while (userKey.length < userStringLens) {
+				userKey = userKey.concat(userKey);
+			}
+			return userKey;
+		}
 
     		/* --- Get new char index in alhpabet to encrypt --- */
-    function getIndexOfNewLetterToEncrypt(indexOfLetter, userKey) {
-      var alphabetLens = alphabetBig.length;
-      if (indexOfLetter + userKey >= alphabetLens) {
-        indexOfLetter = indexOfLetter + userKey - alphabetLens;
-      }
-      else {
-        indexOfLetter = indexOfLetter + userKey;
-      }
-      return indexOfLetter;
-    }
+		function getIndexOfNewLetterToEncrypt(indexOfLetter, userKey) {
+			var alphabetLens = alphabetBig.length;
+			
+			if (indexOfLetter + userKey >= alphabetLens) {
+				indexOfLetter = indexOfLetter + userKey - alphabetLens;
+			}
+			else {
+				indexOfLetter = indexOfLetter + userKey;
+			}
+			
+			return indexOfLetter;
+		}
 
-    /* --- Get new char index in alhpabet to decipher --- */
-    function getIndexOfNewLetterToDecipher(indexOfLetter, userKey) {
-      var alphabetLens = alphabetBig.length;
-      if (indexOfLetter - userKey < 0) {
-        indexOfLetter =  (alphabetLens + indexOfLetter) - userKey;
-      }
-      else {
-        indexOfLetter = indexOfLetter - userKey;
-      }
-      return indexOfLetter;
-    }
+		/* --- Get new char index in alhpabet to decipher --- */
+		function getIndexOfNewLetterToDecipher(indexOfLetter, userKey) {
+			var alphabetLens = alphabetBig.length;
+			
+			if (indexOfLetter - userKey < 0) {
+				indexOfLetter =  (alphabetLens + indexOfLetter) - userKey;
+			}
+			else {
+				indexOfLetter = indexOfLetter - userKey;
+			}
+			
+		return indexOfLetter;
+		}
 
-				/* --- Encrypt function --- */
+		/* --- Encrypt function --- */
 		function encrypt() {
-    	var userString = document.getElementById("userString").value;
-    	var userKey = document.getElementById("userKey").value;
-      var encryptedUserString = "";
-      var userStringLens = userString.length;
-      var indexOfLetter;
-      var indexOfNewLetter;
+			var userString = document.getElementById("userString").value;
+			var userKey = document.getElementById("userKey").value;
+			var encryptedUserString = "";
+			var userStringLens = userString.length;
+			var indexOfLetter;
+			var indexOfNewLetter;
 
-      userKey = increaseUserKey(userKey, userStringLens);
+			userKey = increaseUserKey(userKey, userStringLens);
 
-      for (var i = 0; i < userStringLens; i++) {
-      	if (alphabetBig.indexOf(userString[i]) != -1) {
-      		indexOfLetter = alphabetBig.indexOf(userString[i]);
-          indexOfNewLetter = getIndexOfNewLetterToEncrypt(indexOfLetter, transformUserKey(userKey[i]));
-        	encryptedUserString = encryptedUserString.concat(alphabetBig[indexOfNewLetter]);
-      	}
-        else if (alphabetSmall.indexOf(userString[i]) != -1) {
-      		indexOfLetter = alphabetSmall.indexOf(userString[i]);
-          indexOfNewLetter = getIndexOfNewLetterToEncrypt(indexOfLetter, transformUserKey(userKey[i]));
-          encryptedUserString = encryptedUserString.concat(alphabetSmall[indexOfNewLetter]);
-      	}
-      	else {
-      		encryptedUserString = encryptedUserString.concat(userString[i]);
-      	}
-      }
-      document.getElementById("rezultEncryptOrDesipher").value = encryptedUserString;
-    }
+			for (var i = 0; i < userStringLens; i++) {
+				if (alphabetBig.indexOf(userString[i]) != -1) {
+					indexOfLetter = alphabetBig.indexOf(userString[i]);
+					indexOfNewLetter = getIndexOfNewLetterToEncrypt(indexOfLetter, transformUserKey(userKey[i]));
+					encryptedUserString = encryptedUserString.concat(alphabetBig[indexOfNewLetter]);
+				}
+				
+				else if (alphabetSmall.indexOf(userString[i]) != -1) {
+					indexOfLetter = alphabetSmall.indexOf(userString[i]);
+					indexOfNewLetter = getIndexOfNewLetterToEncrypt(indexOfLetter, transformUserKey(userKey[i]));
+					encryptedUserString = encryptedUserString.concat(alphabetSmall[indexOfNewLetter]);
+				}
+				
+				else {
+					encryptedUserString = encryptedUserString.concat(userString[i]);
+				}
+			}
+			
+			document.getElementById("rezultEncryptOrDesipher").value = encryptedUserString;
+		}
 
     		/* --- Decipher function --- */
-    function decipher() {
-    	var userString = document.getElementById("userString").value;
-    	var userKey = document.getElementById("userKey").value;
-      var decipheredUserString = "";
-      var userStringLens = userString.length;
-      var indexOfLetter;
-      var indexOfNewLetter;
+		function decipher() {
+			var userString = document.getElementById("userString").value;
+			var userKey = document.getElementById("userKey").value;
+			var decipheredUserString = "";
+			var userStringLens = userString.length;
+			var indexOfLetter;
+			var indexOfNewLetter;
 
-      userKey = increaseUserKey(userKey, userStringLens);
+			userKey = increaseUserKey(userKey, userStringLens);
 
-      for (var i = 0; i < userStringLens; i++) {
-      	if (alphabetBig.indexOf(userString[i]) != -1) {
-      		indexOfLetter = alphabetBig.indexOf(userString[i]);
-          indexOfNewLetter = getIndexOfNewLetterToDecipher(indexOfLetter, transformUserKey(userKey[i]));
-        	decipheredUserString = decipheredUserString.concat(alphabetBig[indexOfNewLetter]);
-      	}
-        else if (alphabetSmall.indexOf(userString[i]) != -1) {
-      		indexOfLetter = alphabetSmall.indexOf(userString[i]);
-          indexOfNewLetter = getIndexOfNewLetterToDecipher(indexOfLetter, transformUserKey(userKey[i]));
-          decipheredUserString = decipheredUserString.concat(alphabetSmall[indexOfNewLetter]);
-      	}
-      	else {
-      		decipheredUserString = decipheredUserString.concat(userString[i]);
-      	}
-      }
-      document.getElementById("rezultEncryptOrDesipher").value = decipheredUserString;
-    }
+			for (var i = 0; i < userStringLens; i++) {
+				if (alphabetBig.indexOf(userString[i]) != -1) {
+					indexOfLetter = alphabetBig.indexOf(userString[i]);
+					indexOfNewLetter = getIndexOfNewLetterToDecipher(indexOfLetter, transformUserKey(userKey[i]));
+					decipheredUserString = decipheredUserString.concat(alphabetBig[indexOfNewLetter]);
+				}
+			
+				else if (alphabetSmall.indexOf(userString[i]) != -1) {
+					indexOfLetter = alphabetSmall.indexOf(userString[i]);
+					indexOfNewLetter = getIndexOfNewLetterToDecipher(indexOfLetter, transformUserKey(userKey[i]));
+					decipheredUserString = decipheredUserString.concat(alphabetSmall[indexOfNewLetter]);
+				}
+			
+				else {
+				decipheredUserString = decipheredUserString.concat(userString[i]);
+				}
+			}
+			
+			document.getElementById("rezultEncryptOrDesipher").value = decipheredUserString;
+		}
 	</script>
 </body>
 </html>
