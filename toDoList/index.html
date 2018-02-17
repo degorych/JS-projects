@@ -1,0 +1,154 @@
+<!doctype html>
+<head>
+  <title>ToDo list</title>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      $("#btn").click(
+        function(){
+          if (document.getElementById('deln').style.backgroundColor == 'yellow') {
+            $.when(getNotesIntoDb()).then(sendAjaxForm());
+          }
+          
+          else {
+            sendAjaxForm();
+          }
+        return false; 
+        }
+      );
+    });
+ 
+    function sendAjaxForm() {
+      jQuery.ajax({
+        url:     "/addNote", //url страницы 
+        type:     "POST", //метод отправки
+        dataType: "json", //формат данных
+        data: jQuery("#noteForm").serialize(),  // Сеарилизуем объект
+        success: function(data) { //Данные отправлены успешно
+          $("#notes").append('<p><form method="post" id="sendForm'+data[0].id+'" action="" ><div style="float:left"></div><div style="float:left" id="userNote'+data[0].id+'">'+data[0].messageText+'</div><input type="button" style="padding: 10px, float: left" onclick="showHidden('+data[0].id+', userNote'+data[0].id+')" value="Редактировать" id="edit'+data[0].id+'">'+'<br><input type="hidden" id="delNote'+data[0].id+'" name="deleteText" value="1"><span style="visibility: hidden" id="checkb'+data[0].id+'">Выполнено</span><input type="hidden" size="20" id="noteEdit'+data[0].id+'" name="messageText" placeholder="'+data[0].messageText+'"><input type="hidden" name="id" value="'+data[0].id+'"><input type="hidden" value="Отправить" id="'+data[0].id+'" onclick="sendNoteToServer('+data[0].id+')"><input type="hidden" value="Отменить" id="noChange'+data[0].id+'" onclick="hiddenValues('+data[0].id+')"></form></p>');
+          document.getElementById('userMessage').value = '';
+        },
+        error: function(data) { // Данные не отправлены
+          $("#notes").append('Ошибка. Данные не отправленны.');
+        }
+      });
+    } 
+
+    $(document).ready(function() {
+      getNotesIntoDb();
+    });
+
+    function getNotesIntoDb(){
+      $.get ('notes', function(data){
+
+        document.getElementById('undeln').style.backgroundColor = 'yellow';
+        document.getElementById('deln').style.backgroundColor = 'white';
+
+        var i = 0;
+        var dataLens = data.length;
+        $('#notes').empty();
+        while (i < dataLens) {
+          $('#notes').append('<p><form method="post" id="sendForm'+data[i].id+'" action="" ><div style="float:left"></div><div style="float:left" id="userNote'+data[i].id+'">'+data[i].messageText+'</div><input type="button" style="padding: 10px, float: left" onclick="showHidden('+data[i].id+', userNote'+data[i].id+')" value="Редактировать" id="edit'+data[i].id+'">'+'<br><input type="hidden" id="delNote'+data[i].id+'" name="deleteText" value="1"><span style="visibility: hidden" id="checkb'+data[i].id+'">Выполнено</span><input type="hidden" size="20" id="noteEdit'+data[i].id+'" name="messageText" placeholder="'+data[i].messageText+'"><input type="hidden" name="id" value="'+data[i].id+'"><input type="hidden" value="Отправить" id="'+data[i].id+'" onclick="sendNoteToServer('+data[i].id+')"><input type="hidden" value="Отменить" id="noChange'+data[i].id+'" onclick="hiddenValues('+data[i].id+')"></form></p>');
+          i++;
+        }
+      }, 'json');
+    }
+
+    function getDelNotesIntoDb(){
+      $.get ('delnotes', function(data){
+
+        document.getElementById('deln').style.backgroundColor = 'yellow';
+        document.getElementById('undeln').style.backgroundColor = 'white';
+
+        var i = 0;
+        var dataLens = data.length;
+        $('#notes').empty();
+        while (i < dataLens) {
+          $('#notes').append('<p><div>'+data[i].messageText+'</div></p>');
+          i++;
+        }
+      }, 'json');
+    }
+
+    function showHidden(id) {
+      var string1 = 'noteEdit'+id;
+      var delNote = 'delNote'+id;
+      var checkb = 'checkb'+id;
+      var noChange = 'noChange'+id;
+
+      document.getElementById(string1).setAttribute('type', 'text');
+      document.getElementById(id).setAttribute('type', 'button');
+      document.getElementById(delNote).setAttribute('type', 'checkbox');
+      document.getElementById(noChange).setAttribute('type', 'button');
+      document.getElementById(checkb).style.visibility = 'visible';
+    }
+
+    function hiddenValues(id) {
+      var string1 = 'noteEdit'+id;
+      var deleteTextData = 'delNote'+id;
+      var checkb = 'checkb'+id;
+      var noChange = 'noChange'+id;
+
+      document.getElementById(string1).setAttribute('type', 'hidden');
+      document.getElementById(id).setAttribute('type', 'hidden');
+      document.getElementById(noChange).setAttribute('type', 'hidden');
+      document.getElementById(deleteTextData).setAttribute('type', 'hidden');
+      document.getElementById(checkb).style.visibility = 'hidden';
+      document.getElementById(string1).value = "";
+
+    }
+
+    function sendNoteToServer(id) {
+      var sendFormData = "#sendForm"+id;
+      var userNoteData = "#userNote"+id;
+      var deleteTextData = "#delNote"+id;
+      var noteEdit = "#noteEdit"+id;
+
+      if ($(deleteTextData).prop("checked")){
+        $(deleteTextData).attr("value",0);
+      }
+
+      if ($(noteEdit).attr("value") == undefined) {
+        var placeholderValue = $(noteEdit).attr("placeholder");
+        $(noteEdit).attr("value", placeholderValue);
+      }
+
+      jQuery.ajax({
+        url:     "/updateNote", //url страницы 
+        type:     "POST", //метод отправки
+        dataType: "json", //формат данных
+        data: jQuery(sendFormData).serialize(),  // Сеарилизуем объект
+        success: function(response) { //Данные отправлены успешно
+          if (response[0].deleteText == 0){
+            getNotesIntoDb();
+          }
+          $(userNoteData).empty().append(response[0].messageText);
+          hiddenValues(id);
+        } 
+      });
+    }
+
+  </script>
+</head>
+
+<body>
+  <a href="#" style="background-color: white" id="deln" onclick="getDelNotesIntoDb();">Показать выполненные</a>
+  <a href="#" style="background-color: white" id="undeln" onclick="getNotesIntoDb();">В работе</a>
+  <br>
+    <form method="post" id="noteForm" action="" >
+      <p>
+        <label>
+          Your note:&nbsp;
+        </label>
+        <input type="text" id="userMessage" name="messageText" placeholder="YOUR NOTE" >
+      </p>
+        <input type="button" id="btn" value="Отправить" />
+        <input type="hidden" name="deleteText" value="1">
+    </form>
+    <br>
+    <hr>
+    <br>
+    <div id="notes"><div> 
+</body>
+</html>
